@@ -206,28 +206,79 @@ function getGame2(juego_nombre) {
 	}).done(function(data, status, jqxhr) {
 
 				var game = data;
-				$('<div class="col-lg-3 col-md-6">' +
-					'<div class="panel panel-primary"> ' +
-					'<div class="panel-heading">' +
-                            '<div class="row">' +
-                                '<div class="col-xs-3">' +
-                                   '<img class="img-rounded" src="img/guillermo.jpg" width="200" height="200"> ' +
-                                '</div>' +
-                                '<div class="col-xs-9 text-right">' +
-                                   ' <div class="huge">'+ game.name + '</div> ' +                                   
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<a href="juegos.html">' +
-                            '<div class="panel-footer">' +
-                                '<span class="pull-left">Ver</span>' +
-                                '<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>' +
-                                '<div class="clearfix"></div>' +
-                            '</div>' +
-                        '</a>' +
-                    '</div>' +
-                '</div>   ').appendTo($('#result'));
-								
+				$('<div class="container">' +
+'<div class="thumbnail">' +
+'<div class="text-center">' +
+'<div class="text-left"><button type="button" class="btn btn-info">Favoritos</button></div>' +
+'<div class="text-right"<a href="#">Puntuación <span class="badge" id="nota"></span></a></div>' +
+'<h1>+ game.name +</h1>' +
+'<p></p>' +
+'<div class="row">' +
+'  <div class="col-sm-10" >' +
+'<a href="img/portada3.jpg"><img src="img/portada3.jpg" class="img-rounded" alt="" width="600" height="600"></a></div>' +
+'<div class="col-sm-1" >  ' +
+'<div class="text-left">' +
+'<div class="radio"> <label><input type="radio" name="optradio">0</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">1</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">2</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">3</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">4</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">5</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">6</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">7</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">8</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">9</label></div>' +
+'<div class="radio"> <label><input type="radio" name="optradio">10</label></div>' +
+'</div>' +
+'</div>' +
+'<div class="row">  ' +
+'  <div class="col-sm-10" >' +
+'  <p class="text-center">Comentario sobre el juego. Puede escribir lo que sea, dependiendo de lo que se considere necesario.</p>' +
+'  </div>' +
+'  <div class="col-sm-2" >' +
+'  <div class="text-left">' +
+'<button type="button" class="btn btn-info">Puntua</button> ' +
+'  </div>' +
+'  </div>' +
+'  </div>' +  
+' <div class="page-header">' +
+'    <p class="text-left"></p>     ' +
+'  </div>' +
+'  <div class="row">' +
+'  <div class="col-sm-1" > </div>' +
+'  <div class="col-sm-11" >' +
+'  <div class="form-group">  ' +
+'  <div class="row control-group">' +
+'     <div class="form-group col-xs-12 floating-label-form-group controls">' +
+'     <label>Mensaje</label>' +
+'      <textarea rows="5" class="form-control" placeholder="Mensaje" id="mensaje" required data-validation-required-message="Introduce un mensaje."></textarea>' +
+'      <p class="help-block text-danger"></p>' +
+'     </div>' +
+'    </div>' +
+'   <br>' +
+'     <div id="success"></div>' +
+'     <div class="row">' +
+'     <div class="form-group col-xs-12">' +
+'     <button type="submit" class="btn btn-default">Enviar</button>' +
+'     </div>' +
+'     </div>' +  
+'</div>' +
+'</div>' +
+'</div>' +
+'<div class="row">' +
+'  <div class="row">' +
+'  <div class="col-sm-1" > </div>' +
+'  <div class="col-sm-9" >' +
+'  <span id="comentarios"></span>' +  
+'  <h3 class="text-left">Comentarios:</h3>' +  
+'</div>' +
+'<div class="col-sm-2" > </div>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</div>').appendTo($('#result'));
+						
 
 			}).fail(function() {
 				$('<div class="alert alert-danger"> Juego no encontrado </div>').appendTo($("#result"));
