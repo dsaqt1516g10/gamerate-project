@@ -1,13 +1,13 @@
-var API_BASE_URL = "http://localhost:8080/rate";
+var API_BASE_URL = "http://147.83.7.207:8081/rate";
 
 $(document).ready(function(){
 	getCookie();	
 });
 function getCookie() {
 
-	if($.cookie('username')) {
+	if($.cookie('loginid')) {
 		console.log("logeado");
-		var user_tag = $.cookie('username');
+		var user_tag = $.cookie('loginid');
 	    $('#login_info').html('<a style="color:#e52705" href="logout.html"><strong> Registrado </strong></a>');
         $('#create_result').html('<a href="login.html"><strong>  </strong></a>');
 
@@ -57,19 +57,18 @@ $("#registrarse").click(function(e) {
 function register(login){
 	console.log(login);
 	var url = API_BASE_URL + '/users';
-	var data = JSON.stringify(login);
+	var data = $.param(login);
 
 	$.ajax({
 		url : url,
 		type : 'POST',
 		crossDomain : true,
-		contentType : 'application/vnd.dsa.rate.user+json',
+		contentType : 'application/x-www-form-urlencoded',
 		dataType : 'json',
 		data : data
 	}).done(function(data, status, jqxhr) {
         var inf = data;
-		/*alert("¡Bienvenido "+inf.loginid +"! Ya puedes iniciar sesión");*/
-		log(login);
+		alert("¡Te has registrado como: "+login.loginid+"! Ya puedes iniciar sesión");		
 
   	}).fail(function() {
 		alert("Error al registrarse: Nombre de usuario ya en uso");
@@ -94,52 +93,54 @@ $("#login").click(function(e) {
 	}
 	else
 	{
-		var login = new Object();
-		login.username = $("#log_user").val();
-		login.password = $("#log_pass").val();
-		log(login);
+		var loginn = new Object();
+		loginn.loginid = $("#log_user").val();
+		loginn.password = $("#log_pass").val();		
+		log(loginn);
 	}
 });
-function log(login){
-	console.log(login);
-	var url = API_BASE_URL + '/users/login';
-	var data = JSON.stringify(login);
+function log(loginn){
+	console.log(loginn);
+	var url = API_BASE_URL + '/login';
+	var data = $.param(loginn);
 
 	$.ajax({
 		url : url,
 		type : 'POST',
 		crossDomain : true,
-		contentType : 'application/vnd.dsa.rate.user+json',
+		contentType : 'application/x-www-form-urlencoded',
 		dataType : 'json',
 		data : data
 	}).done(function(data, status, jqxhr) {
 
 		var inf = data;
 
-		if(inf.loginSuccesful!= true){
-			alert("¡Usuario o contraseña incorrectos!");
+		/*if(inf.loginnSuccesful!= true)*/
+
+if($("#log_user").val() == "sgr"){
+			alert("¡Usuario se llama sgr!");
 		}
 		else{
-
-			var user_id_login = inf.usuarioid;
+				alert("¡Usuario y contraseña correctos!");
+			var user_token= inf.token;
 			var inputname = $('#log_user').val();
 			var inputpass  = $('#log_pass').val();
-
-			$.cookie('username', inputname, { expires: 1 });
-			var currentusr = $.cookie('username');
+			
+			$.cookie('loginid', inputname, { expires: 1 });
+			var currentusr = $.cookie('loginid');
 
 			$.cookie('password', inputpass, { expires: 1 });
-			var currentpss = $.cookie('pasword');
+			var currentpss = $.cookie('password');
 
-			$.cookie('user_id', user_id_login, { expires: 1 });
-			var user_id_log = $.cookie('user_id');
+			$.cookie('token', user_token, { expires: 1 });
+			var user_id_log = $.cookie('userid');
 
-			console.log(user_id_log);
+			console.log(user_token);
 			console.log(currentusr);
 			console.log(currentpss);
 
-			alert("¡Bienvenido "+inf.username+"!");
-			window.location = "portada.html"
+			alert("¡Bienvenido "+loginn.loginid+", tu id es: "+inf.userid+", y tu token de acceso es: "+inf.token+"!");
+			/*window.location = "portada.html"*/
 
 		}
 
@@ -152,7 +153,7 @@ function log(login){
 /*--------------------------------------------LOGOUT-------------------------------------------*/
 $('#logout').on('click', function(e){
 	e.preventDefault();
-	if(($.removeCookie('username'))&&($.removeCookie('password'))&&($.removeCookie('user_id'))){
+	if(($.removeCookie('loginid'))&&($.removeCookie('password'))&&($.removeCookie('user_id'))){
 		alert("¡Hasta pronto!");		
 		window.location = "portada.html"
 	}
@@ -193,6 +194,8 @@ function getGame(juego_nombre) {
 $("#button_get2").click(function(e) {
 	e.preventDefault();
 	getGame2($("#juego_nombre").val());
+	getScore2($("#juego_nombre").val());
+	getRev2($("#juego_nombre").val());
 });
 function getGame2(juego_nombre) {
 	var url = API_BASE_URL + '/game/' + juego_nombre;
@@ -210,12 +213,12 @@ function getGame2(juego_nombre) {
 '<div class="thumbnail">' +
 '<div class="text-center">' +
 '<div class="text-left"><button type="button" class="btn btn-info">Favoritos</button></div>' +
-'<div class="text-right"<a href="#">Puntuación <span class="badge" id="nota"></span></a></div>' +
-'<h1>+ game.name +</h1>' +
+'<div class="text-right"<a href="#"><span class="badge" id="nota"></span></a></div>' +
+'<h1>'+ game.name +'</h1>' +
 '<p></p>' +
 '<div class="row">' +
 '  <div class="col-sm-10" >' +
-'<a href="img/portada3.jpg"><img src="img/portada3.jpg" class="img-rounded" alt="" width="600" height="600"></a></div>' +
+'<a href="img/portada3.jpg"><img src="'+game.name+'.jpg" class="img-rounded" alt="" width="600" height="600"></a></div>' +
 '<div class="col-sm-1" >  ' +
 '<div class="text-left">' +
 '<div class="radio"> <label><input type="radio" name="optradio">0</label></div>' +
@@ -269,8 +272,8 @@ function getGame2(juego_nombre) {
 '  <div class="row">' +
 '  <div class="col-sm-1" > </div>' +
 '  <div class="col-sm-9" >' +
-'  <span id="comentarios"></span>' +  
 '  <h3 class="text-left">Comentarios:</h3>' +  
+'  <span id="comentarios"></span>' +  
 '</div>' +
 '<div class="col-sm-2" > </div>' +
 '</div>' +
@@ -282,6 +285,52 @@ function getGame2(juego_nombre) {
 
 			}).fail(function() {
 				$('<div class="alert alert-danger"> Juego no encontrado </div>').appendTo($("#result"));
+	});
+
+}
+function getScore2(juego_nombre) {
+	var url = API_BASE_URL + '/game/' + juego_nombre;
+	$("#nota").text('');
+
+	$.ajax({
+		url : url,
+		type : 'GET',
+		crossDomain : true,
+		dataType : 'json',
+	}).done(function(data, status, jqxhr) {
+
+				var game = data;
+
+				$("#nota").text('<strong> Score: </strong> ' + game.score + '<br>').appendTo($('#nota'));
+
+			}).fail(function() {
+				$('<div class="alert alert-danger"> No tiene puntuación </div>').appendTo($("#nota"));
+	});
+
+}
+function getRev2(juego_nombre) {
+	var url = API_BASE_URL + '/rev/' + juego_nombre;
+	$("#comentarios").text('');
+
+	$.ajax({
+		url : url,
+		type : 'GET',
+		crossDomain : true,
+		dataType : 'json',
+	}).done(function(data, status, jqxhr) {
+
+				var game = data;
+
+				$("#comentarios").text('<div class="jumbotron"><div class="text-left">'+
+				'<strong> ID: ' + game.id + '</strong><br>'+
+				'<strong> Userid: </strong> ' + game.userid + '<br>'+
+				'<strong> Gameid: </strong> ' + game.gameid + '<br>'+
+				'<strong> Content: </strong> ' + game.content + '<br>'+
+				'</div>'+
+				'</div>').appendTo($('#result'));
+
+			}).fail(function() {
+				$('<div class="alert alert-danger"> Comentario no encontrado </div>').appendTo($("#comentarios"));
 	});
 
 }
@@ -342,7 +391,7 @@ function getScore(juego_nombre) {
 }
 $("#button_gets").click(function(e) {
 	e.preventDefault();
-	var url = API_BASE_URL + '/game/games?per_page=5';
+	var url = API_BASE_URL + '/game/games?per_page=2';
 	getGames(url);
 });
 function getGames(url) {	
@@ -368,7 +417,7 @@ function getGames(url) {
 
 }
 function GameCollection(gameCollection){
-	this.game = gameCollection;
+	this.games = gameCollection;
 	var instance = this;
 
 	this.buildLinks = function(header){
@@ -415,7 +464,7 @@ $("#button_favoritos").click(function(e) {
 });
 function getMisJuegos() {
 
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 
 	$.ajaxSetup({
@@ -465,15 +514,13 @@ function getMisJuegos() {
 }
 $("#button_get_por_categorias").click(function(e) {
 	e.preventDefault();
-
     var categoria = $("#categoria").val();
-
 	getJuegos_categorias(categoria);
 });
 function getJuegos_categorias(categoria) {
     
 	var url = API_BASE_URL + '/game/categorias/' +categoria;
-	$("#mis_juegos").text('');
+	$("#result").text('');
 	
 	$.ajax({
 		url : url,
@@ -504,11 +551,11 @@ function getJuegos_categorias(categoria) {
                             '</div>' +
                         '</a>' +
                     '</div>' +
-                '</div>   ').appendTo($('#mis_juegos'));
+                '</div>   ').appendTo($('#result'));
 				
 
 	}).fail(function() {
-		$("#mis_juegos").text("¡No tienes favoritos!");
+		$("#result").text("¡No tienes favoritos!");
 	});
 
 }
@@ -584,7 +631,7 @@ function GameCollection(gameCollection){
 /*--------------------------------------------POST-------------------------------------------*/
 $("#button_crear_comentario").click(function(e) {
 	e.preventDefault();
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 	$.ajaxSetup({
 		headers: { 'Authorization': "Basic "+ btoa(USERNAME+':'+PASSWORD) }
@@ -627,7 +674,7 @@ function createComent(newComent) {
 }
 $("#button_crear_juego").click(function(e) {
 	e.preventDefault();
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 	$.ajaxSetup({
 		headers: { 'Authorization': "Basic "+ btoa(USERNAME+':'+PASSWORD) }
@@ -680,7 +727,7 @@ $("#button_eliminar_comentario").click(function(e) {
 });
 function eliminarcomentario(comentario_a_eliminar) {
 
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 
 	$.ajaxSetup({
@@ -711,7 +758,7 @@ $("#button_eliminar_favoritos").click(function(e) {
 });
 function eliminarfavoritos(favoritos_a_eliminar) {
 
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 
 	$.ajaxSetup({
@@ -742,7 +789,7 @@ $("#button_eliminar_juego").click(function(e) {
 });
 function eliminarjuego(juego_a_eliminar) {
 
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 
 	$.ajaxSetup({
@@ -773,7 +820,7 @@ $("#button_eliminar_categoria").click(function(e) {
 });
 function eliminarcategoria(categoria_a_eliminar) {
 
-	var USERNAME = $.cookie('username');
+	var USERNAME = $.cookie('loginid');
 	var PASSWORD = $.cookie('password');
 
 	$.ajaxSetup({
